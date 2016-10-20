@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "lint": "eslint -c ./.eslintrc ./src; exit 0"
+    "lint": "eslint -c ./.eslintrc ./src"
   },
   "dependencies": {
     "panoptes-client": "^2.5.2",
