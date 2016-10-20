@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/zooniverse/mobile.svg?branch=master)](https://travis-ci.org/zooniverse/mobile)
+
 # Zooniverse Mobile App
 [React Native](https://facebook.github.io/react-native/) app to house a list of zooniverse projects
 
