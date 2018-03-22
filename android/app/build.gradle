@@ -103,7 +103,7 @@ android {
         applicationId "com.zooniversemobile"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 12
+        versionCode 13
         versionName "1.2"
         multiDexEnabled true
         ndk {
