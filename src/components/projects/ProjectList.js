@@ -24,8 +24,9 @@ const mapStateToProps = (state) => {
     
     // Grab all of the projects from the selected Project Tag
     if (selectedProjectTag === 'recent') {
-      const activeProjects = R.filter((project) => { return project.activity_count > 0 }, state.user.projects);
-      projectList = state.projects.projectList.filter((project) => R.keys(activeProjects).includes(project.id));
+        const userProjects = state.user.projects ? state.user.projects : []
+        const activeProjects = R.filter((project) => { return project.activity_count > 0 }, userProjects);
+        projectList = state.projects.projectList.filter((project) => R.keys(activeProjects).includes(project.id));
     } else {
         projectList = state.projects.projectList.filter((project) => R.contains(selectedProjectTag, project.tags))
     }
