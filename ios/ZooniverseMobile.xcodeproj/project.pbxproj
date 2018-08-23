@@ -1406,10 +1406,7 @@
 				CODE_SIGN_ENTITLEMENTS = ZooniverseMobile/ZooniverseMobile.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GOOGLE_SERVICE_PLIST = "GoogleService-Info-dev";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1443,10 +1440,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ZooniverseMobile/ZooniverseMobile.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GOOGLE_SERVICE_PLIST = "GoogleService-Info-prod";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
