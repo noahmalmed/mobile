@@ -18,11 +18,9 @@ import {
     SvgOverlay
 } from './components'
 import FontedText from '../common/FontedText';
+const bottomViewPadding = 250
+const contractedViewSize = 200
 
-const imageViewSize = {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height - 250
-}
 const mapDispatchToProps = (dispatch) => ({
     drawingScreenActions: bindActionCreators(drawingScreenAction, dispatch)
 })
@@ -34,6 +32,8 @@ const mapStateToProps = (state) => ({
 
 class DrawingScreen extends React.Component {
 
+    expandedImageHeight = () => this.state.screenHeight - bottomViewPadding
+    expandedOverlayHeight = () => this.state.screenHeight
 
     constructor(props) {
         super(props)
@@ -42,23 +42,18 @@ class DrawingScreen extends React.Component {
             imageWidth: 0,
             imageHeight: 0,
             localImagePath: '',
-            imageContainerWidthAnimated: new Animated.Value(imageViewSize.width),
-            imageContainerHeightAnimated: new Animated.Value(imageViewSize.height),
-            imageContainerWidth: imageViewSize.width,
-            imageContainerHeight: imageViewSize.height,
+            screenHeight: Dimensions.get('window').height,
+            drawingContainerHeightValue: contractedViewSize,
+            drawingContainerHeight: new Animated.Value(contractedViewSize),
+            overlayContainerHeight: new Animated.Value(contractedViewSize),
+            drawingComponentsOpacity: new Animated.Value(0),
             expanded: false,
             mode: 'draw'
         }
 
-        this.state.imageContainerWidthAnimated.addListener( ({value}) => {
+        this.state.drawingContainerHeight.addListener( ({value}) => {
             this.setState({
-                imageContainerWidth: value
-            })
-        })
-
-        this.state.imageContainerHeightAnimated.addListener( ({value}) => {
-            this.setState({
-                imageContainerHeight: value
+                drawingContainerHeightValue: value
             })
         })
 
