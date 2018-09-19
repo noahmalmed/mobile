@@ -69,15 +69,17 @@ class DrawingScreen extends React.Component {
         this.saveDrawingsAndClose = this.saveDrawingsAndClose.bind(this)
     }
 
-  componentDidMount() { 
-    loadRemoteImageToCache('https://upload.wikimedia.org/wikipedia/commons/9/91/F-15_vertical_deploy.jpg').then(localImagePath => {      
-        const nativeImage = new NativeImage(localImagePath)
-        nativeImage.getImageSize().then(({width, height}) => {
-            this.setState({
-                imageWidth: width,
-                imageHeight: height,
-                localImagePath,
-                imageLoaded: true
+    componentDidMount() { 
+        // TODO: Actually load an image from Panoptes API
+        loadRemoteImageToCache('https://upload.wikimedia.org/wikipedia/commons/9/91/F-15_vertical_deploy.jpg').then(localImagePath => {      
+            const nativeImage = new NativeImage(localImagePath)
+            nativeImage.getImageSize().then(({width, height}) => {
+                this.setState({
+                    imageWidth: width,
+                    imageHeight: height,
+                    localImagePath,
+                    imageLoaded: true
+                })
             })
         })
     }
