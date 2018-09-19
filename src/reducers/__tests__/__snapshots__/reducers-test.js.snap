@@ -21,8 +21,10 @@ Object {
     "workflow": Object {},
   },
   "drawingScreen": Object {
+    "actions": Array [],
     "idCount": 0,
     "shapes": Object {},
+    "shapesInProgress": Object {},
   },
   "images": Object {},
   "main": Object {
@@ -98,8 +100,10 @@ Object {
     "workflow": Object {},
   },
   "drawingScreen": Object {
+    "actions": Array [],
     "idCount": 0,
     "shapes": Object {},
+    "shapesInProgress": Object {},
   },
   "images": Object {},
   "main": Object {
@@ -174,8 +178,10 @@ Object {
     "workflow": Object {},
   },
   "drawingScreen": Object {
+    "actions": Array [],
     "idCount": 0,
     "shapes": Object {},
+    "shapesInProgress": Object {},
   },
   "images": Object {},
   "main": Object {
@@ -254,8 +260,10 @@ Object {
     "workflow": Object {},
   },
   "drawingScreen": Object {
+    "actions": Array [],
     "idCount": 0,
     "shapes": Object {},
+    "shapesInProgress": Object {},
   },
   "images": Object {},
   "main": Object {
