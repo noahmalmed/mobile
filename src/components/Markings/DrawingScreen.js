@@ -80,55 +80,34 @@ class DrawingScreen extends React.Component {
                 imageLoaded: true
             })
         })
-    })
-  }
+    }
 
-  render() {
-    if (!this.state.imageLoaded) {
+    renderOverlayComponents() {
         return (
-            <View style={styles.loadingContent}>
-                <Text> Loading Content </Text>
-            </View>
-        )
-    }
-
-    const pathPrefix = Platform.OS === 'android' ? 'file://' : ''
-    const imageSizeStyle = {
-        width: this.state.imageContainerWidthAnimated,
-        height: this.state.imageContainerHeightAnimated
-    }
-
-    return (
-        <View style={styles.screenContainer}>
-            <Animated.View style={styles.imageContainer}>
-                <Animated.Image
-                    source={{ uri: pathPrefix + this.state.localImagePath}}
-                    style={[ imageSizeStyle, styles.image]}
-                    resizeMode="contain"
-                />
-                <Animated.View style={[imageSizeStyle, styles.svgContainer]}>
-                    <Animated.View style={[imageSizeStyle, styles.svgOverlayContainer]}>
-                        <SvgOverlay
-                            shape="rect"
-                            mode={this.state.mode}
-                        />
-                    </Animated.View>
-                </Animated.View>
+            <View style={styles.screenContainer}>
                 <DrawingTitle 
                     color="green" 
                     shape="rect" 
                     text="Draw Around Remote" 
                     style={styles.drawingTitle}
                 />
-                <TouchableOpacity style={styles.closeButton}>
+                <TouchableOpacity 
+                    style={styles.closeButton}
+                    onPress={this.clearDrawingsAndClose}
+                >
                     <Icon name="times" style={styles.closeIcon} />
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={this.saveDrawingsAndClose}
+                >
                 <FontedText 
                     numberOfLines={2} 
                     style={styles.saveText}
                 >
                     Save And Close 
                 </FontedText>
+                </TouchableOpacity>
                 <View style={styles.drawingButtonsContainer}>
                     <DrawingButton 
                         style={styles.drawingButton}
@@ -149,10 +128,10 @@ class DrawingScreen extends React.Component {
                         onPress={() => this.setState({mode: 'erase'})}
                     />
                 </View>
-            </Animated.View>
-        </View>
-    )
-  }
+            </View>
+        )
+    }
+
     clearDrawingsAndClose() {
         if (this.props.pendingChanges) {
             Alert.alert(
@@ -225,6 +204,74 @@ class DrawingScreen extends React.Component {
             })
     }
     }
+
+    render() {
+        if (!this.state.imageLoaded) {
+            return (
+                <View style={styles.loadingContent}>
+                    <Text> Loading Content </Text>
+                </View>
+            )
+        }
+
+        const pathPrefix = Platform.OS === 'android' ? 'file://' : ''
+        const imageSizeStyle = {
+            width: Dimensions.get('window').width,
+            height: this.state.drawingContainerHeight
+        }
+
+        const fullScreenAspectRatio = Math.min(imageSizeStyle.width / this.state.imageWidth, this.expandedImageHeight() / this.state.imageHeight)
+        const viewBox = `0 0 ${fullScreenAspectRatio * this.state.imageWidth} ${fullScreenAspectRatio * this.state.imageHeight}`
+
+        const currentAspectRatio = Math.min(imageSizeStyle.width / this.state.imageWidth, this.state.drawingContainerHeightValue / this.state.imageHeight)
+
+        return (
+            <View 
+                onLayout={({nativeEvent}) => this.setState({screenHeight: nativeEvent.layout.height}) }
+                style={styles.screenContainer}
+            >
+                <TouchableOpacity
+                        style={styles.screenContainer}
+                        onPress={this.toggleExpanded}
+                    />
+                <Animated.View style={[styles.imageContainer, { height: this.state.overlayContainerHeight }]}>
+                    <Animated.Image
+                        source={{ uri: pathPrefix + this.state.localImagePath}}
+                        style={[ imageSizeStyle, styles.image]}
+                        resizeMode="contain"
+                    />
+                    <Animated.View style={[styles.buttonOverlay, { height: this.state.overlayContainerHeight, opacity: this.state.drawingComponentsOpacity }]}>
+                        {this.renderOverlayComponents()}
+                    </Animated.View>
+                    <Animated.View style={[imageSizeStyle, styles.svgContainer]}>
+                            {
+                                this.state.expanded ? 
+                                    <SvgOverlay
+                                        viewBox={viewBox}
+                                        width={currentAspectRatio * this.state.imageWidth}
+                                        height={currentAspectRatio * this.state.imageHeight}
+                                        shape="rect"
+                                        mode={this.state.expanded ? this.state.mode : 'view' }
+                                    />
+                                :
+                                    <StaticSvgOverlay
+                                        viewBox={viewBox}
+                                        width={currentAspectRatio * this.state.imageWidth}
+                                        height={currentAspectRatio * this.state.imageHeight}
+                                        shapes={this.props.shapes}
+                                    />
+                            }
+                        </Animated.View>
+                    </Animated.View>
+            </View>
+        )
+    }
+}
+
+DrawingScreen.propTypes = {
+    drawingScreenActions: PropTypes.any,
+    pendingChanges: PropTypes.bool,
+    shapes: PropTypes.object,
 }
 
 const styles = {
@@ -243,7 +290,13 @@ const styles = {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
+        justifyContent: 'center'
+    },
+    buttonOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
         justifyContent: 'center'
     },
     image: {
@@ -253,10 +306,8 @@ const styles = {
     svgContainer: {
         position: 'absolute',
         justifyContent: 'center',
-        alignSelf: 'center'
-    },
-    svgOverlayContainer: {
-        alignSelf: 'center'
+        alignSelf: 'center',
+        alignItems: 'center'
     },
     drawingTitle: {
         position: 'absolute',
@@ -272,11 +323,13 @@ const styles = {
         color: 'white',
         fontSize: 24
     },
-    saveText: {
+    saveButton: {
         width: 90,
         position: 'absolute',
         bottom: 25,
         right: 25,
+    },
+    saveText: {
         fontSize: 16,
         color: 'white',
         fontWeight: 'bold',
@@ -292,4 +345,5 @@ const styles = {
         paddingRight: 10
     }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(DrawingScreen)
