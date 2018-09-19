@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import { loadRemoteImageToCache } from '../../utils/imageUtils'
 import NativeImage from '../../nativeModules/NativeImage'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -21,8 +23,18 @@ const imageViewSize = {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height - 250
 }
+const mapDispatchToProps = (dispatch) => ({
+    drawingScreenActions: bindActionCreators(drawingScreenAction, dispatch)
+})
 
-export default class DrawingScreen extends React.Component {
+const mapStateToProps = (state) => ({
+    pendingChanges: !R.isEmpty(state.drawingScreen.actions),
+    shapes: state.drawingScreen.shapes
+})
+
+class DrawingScreen extends React.Component {
+
+
     constructor(props) {
         super(props)
         this.state = {
@@ -203,3 +215,4 @@ const styles = {
         paddingRight: 10
     }
 }
+export default connect(mapStateToProps, mapDispatchToProps)(DrawingScreen)
