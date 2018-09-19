@@ -42,7 +42,7 @@ const iconFromType = (type) => {
         case 'draw':
             return 'edit'
         case 'erase':
-            return 'eraser'
+            return 'trash'
     }
 }
 
