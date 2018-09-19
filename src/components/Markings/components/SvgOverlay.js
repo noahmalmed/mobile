@@ -20,7 +20,7 @@ import {
 const INITIAL_SQUARE_SIDE = 2
 
 const mapStateToProps = (state) => ({
-        shapes: state.drawingScreen.shapes
+        shapes: state.drawingScreen.shapesInProgress
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch) => ({
  * 
  * Edit - The shapes drawn become editable. The user may move the shapes and change its size.
  * 
- * Delete - The shape becomes deletable.
+ * Delete - The shapes becomes deletable.
  */
 class SvgOverlay extends Component {
 
@@ -66,12 +66,11 @@ class SvgOverlay extends Component {
             })
         })
 
-        this.panResponder = PanResponder.create({
-            // Ask to be the responder:
-            onStartShouldSetPanResponder: () => {return this.props.mode === 'draw' },
-            onStartShouldSetPanResponderCapture: () => {return this.props.mode === 'draw'},
-            onMoveShouldSetPanResponder: () => {return this.props.mode === 'draw'},
-            onMoveShouldSetPanResponderCapture: () => {return this.props.mode === 'draw'},
+        this.drawPanResponder = PanResponder.create({
+            onStartShouldSetPanResponder: () => this.props.mode === 'draw' ,
+            onStartShouldSetPanResponderCapture: () => this.props.mode === 'draw',
+            onMoveShouldSetPanResponder: () => this.props.mode === 'draw',
+            onMoveShouldSetPanResponderCapture: () => this.props.mode === 'draw',
             onPanResponderGrant: (evt) => {
                 const { locationX, locationY } = evt.nativeEvent
                 this.setState({
@@ -168,7 +167,7 @@ class SvgOverlay extends Component {
     render() {
         return (
             <Svg
-                { ...this.panResponder.panHandlers }
+                { ...this.drawPanResponder.panHandlers }
                 onLayout={({nativeEvent})=> {
                     const { height, width } = nativeEvent.layout
                     this.setState({
@@ -176,7 +175,8 @@ class SvgOverlay extends Component {
                         overlayWidth: width
                     })
                 }}
-                style={styles.svg}
+                width={this.props.width}
+                height={this.props.height}
                 preserveAspectRatio="xMidYMid meet"
             >
                 { this.state.isDrawing ? 
@@ -189,18 +189,14 @@ class SvgOverlay extends Component {
     }
 }
 
-const styles = {
-    svg: {
-        flex: 1
-    }
-}
-
 SvgOverlay.propTypes = {
     color: PropTypes.string,
     shape: PropTypes.oneOf(['rect']),
     shapes: PropTypes.object,
-    mode: PropTypes.oneOf(['draw', 'edit', 'erase']),
-    drawingScreenActions: PropTypes.object
+    mode: PropTypes.oneOf(['draw', 'edit', 'erase', 'view']),
+    drawingScreenActions: PropTypes.object,
+    height: PropTypes.number,
+    width: PropTypes.number
 }
 
 SvgOverlay.defaultProps = {
