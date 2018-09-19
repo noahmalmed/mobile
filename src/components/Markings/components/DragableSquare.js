@@ -8,6 +8,7 @@ import {
     Circle,
     Rect
 } from 'react-native-svg'
+import R from 'ramda'
 import CloseButtonSVG from './CloseButtonSVG'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -18,8 +19,10 @@ import {
 } from '../drawingUtils'
 
 const mapStateToProps = (state, ownProps) => {
-    const { x, y, width, height, color } = state.drawingScreen.shapes[ownProps.index]
+    const shape = state.drawingScreen.shapesInProgress[ownProps.index]
+    const { x, y, width, height, color } = shape
     return {
+        shape,
         x,
         y,
         width,
@@ -47,6 +50,17 @@ class DragableSquare extends React.Component {
         onPanResponderRelease,
     });
 
+    componentDidUpdate(prevProps) {
+        if (!R.equals(this.props.shape, prevProps.shape)) {
+            this.setState({
+                x: this.props.shape.x,
+                y: this.props.shape.y,
+                width: this.props.shape.width,
+                height: this.props.shape.height
+            })
+        }
+}
+
     constructor(props) {
         super(props)
 
@@ -56,10 +70,10 @@ class DragableSquare extends React.Component {
          * so we don't update global state on pan gestures
          */
         this.state = { 
-            x: props.x,
-            y: props.y,
-            width: props.width,
-            height: props.height
+            x: props.shape.x,
+            y: props.shape.y,
+            width: props.shape.width,
+            height: props.shape.height
         }
         
         /**
@@ -69,22 +83,24 @@ class DragableSquare extends React.Component {
         this.topLeftResponder = this.createPanResponder(
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.setState({
-                    x: this.props.x + dx,
-                    y: this.props.y + dy - distanceFromRange(locationY, 0, this.props.containerHeight),
-                    width: this.props.width - dx,
-                    height: this.props.height - (dy - distanceFromRange(locationY, 0, this.props.containerHeight))
+                    x: this.props.shape.x + adjustedPanMovementX,
+                    y: this.props.shape.y + adjustedPanMovementY,
+                    width: this.props.shape.width - adjustedPanMovementX,
+                    height: this.props.shape.height - adjustedPanMovementY
                 })
             },
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.props.drawingScreenActions.mutateShapeAtIndex({
-                    dx, 
-                    dy: dy - distanceFromRange(locationY, 0,this.props.containerHeight), 
-                    dw: -dx,
-                    dh: -(dy - distanceFromRange(locationY, 0,this.props.containerHeight))
+                    dx: adjustedPanMovementX, 
+                    dy: adjustedPanMovementY, 
+                    dw: - adjustedPanMovementX,
+                    dh: - adjustedPanMovementY
                 }, this.props.index)
             }
         )
@@ -92,20 +108,22 @@ class DragableSquare extends React.Component {
         this.topRightResponder = this.createPanResponder(
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.setState({
-                    y: this.props.y + dy - distanceFromRange(locationY, 0,this.props.containerHeight),
-                    width: this.props.width + dx,
-                    height: this.props.height - (dy - distanceFromRange(locationY, 0,this.props.containerHeight))
+                    y: this.props.shape.y + adjustedPanMovementY,
+                    width: this.props.shape.width + adjustedPanMovementX,
+                    height: this.props.shape.height - adjustedPanMovementY
                 })
             },
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.props.drawingScreenActions.mutateShapeAtIndex({
-                    dy: dy - distanceFromRange(locationY, 0,this.props.containerHeight), 
-                    dw: dx,
-                    dh: - (dy - distanceFromRange(locationY, 0,this.props.containerHeight))
+                    dy: adjustedPanMovementY, 
+                    dw: adjustedPanMovementX,
+                    dh: - adjustedPanMovementY
                 }, this.props.index)
             },
         )
@@ -113,20 +131,22 @@ class DragableSquare extends React.Component {
         this.bottomLeftResponder = this.createPanResponder(
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.setState({
-                    x: this.props.x + dx,
-                    width: this.props.width - dx,
-                    height: this.props.height + dy - distanceFromRange(locationY, 0,this.props.containerHeight)
+                    x: this.props.shape.x + adjustedPanMovementX,
+                    width: this.props.shape.width - adjustedPanMovementX,
+                    height: this.props.shape.height + adjustedPanMovementY
                 })
             },
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.props.drawingScreenActions.mutateShapeAtIndex({
-                    dx, 
-                    dw: -dx, 
-                    dh: dy - distanceFromRange(locationY, 0,this.props.containerHeight),
+                    dx: adjustedPanMovementX, 
+                    dw: -adjustedPanMovementX, 
+                    dh: adjustedPanMovementY,
                 }, this.props.index)
             },
         )
@@ -134,18 +154,20 @@ class DragableSquare extends React.Component {
         this.bottomRightResponder = this.createPanResponder(
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.setState({
-                    width: this.props.width + dx,
-                    height: this.props.height + dy - distanceFromRange(locationY, 0,this.props.containerHeight)
+                    width: this.props.shape.width + adjustedPanMovementX,
+                    height: this.props.shape.height + adjustedPanMovementY
                 })
             },
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const { locationY } = evt.nativeEvent
+                const adjustedPanMovementY = dy - distanceFromRange(evt.nativeEvent.locationY, 0, this.props.containerHeight)
+                const adjustedPanMovementX = dx - distanceFromRange(evt.nativeEvent.locationX, 0, this.props.containerWidth)
                 this.props.drawingScreenActions.mutateShapeAtIndex({ 
-                    dw: dx,
-                    dh: dy - distanceFromRange(locationY, 0,this.props.containerHeight)
+                    dw: adjustedPanMovementX,
+                    dh: adjustedPanMovementY
                 }, this.props.index)
             },
         )
@@ -157,9 +179,9 @@ class DragableSquare extends React.Component {
         this.squareDragResponder = this.createPanResponder(
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const xSide = this.props.x + dx
+                const xSide = this.props.shape.x + dx
                 const widthSide = xSide + this.state.width
-                const ySide = this.props.y + dy
+                const ySide = this.props.shape.y + dy
                 const heightSide = ySide + this.state.height
                 this.setState({
                     x: xSide - distanceFromRangeToRange(Math.min(xSide, widthSide), Math.max(xSide,widthSide), 0, this.props.containerWidth),
@@ -168,9 +190,9 @@ class DragableSquare extends React.Component {
             },
             (evt, gestureState) => {
                 const { dx, dy } = gestureState;
-                const xSide = this.props.x + dx
+                const xSide = this.props.shape.x + dx
                 const widthSide = xSide + this.state.width
-                const ySide = this.props.y + dy
+                const ySide = this.props.shape.y + dy
                 const heightSide = ySide + this.state.height
                 this.props.drawingScreenActions.mutateShapeAtIndex({
                     dx: dx - distanceFromRangeToRange(Math.min(xSide, widthSide), Math.max(xSide,widthSide), 0, this.props.containerWidth),
@@ -199,7 +221,7 @@ class DragableSquare extends React.Component {
                     ref={ ref => this.topLeftButton = ref }
                     x={this.state.x}
                     y={this.state.y}
-                    fill={this.props.isEditable ? this.props.color : 'transparent'}
+                    fill={this.props.isEditable ? this.props.shape.color : 'transparent'}
                     r="8"
                 />
                 <Circle
@@ -207,7 +229,7 @@ class DragableSquare extends React.Component {
                     ref={ ref => this.topRightButton = ref }
                     x={this.state.x + this.state.width}
                     y={this.state.y}
-                    fill={this.props.isEditable ? this.props.color : 'transparent'}
+                    fill={this.props.isEditable ? this.props.shape.color : 'transparent'}
                     r="8"
                 />
                 <Circle
@@ -215,7 +237,7 @@ class DragableSquare extends React.Component {
                     ref={ ref => this.bottomLeftButton = ref }
                     x={this.state.x}
                     y={this.state.height + this.state.y}
-                    fill={this.props.isEditable ? this.props.color : 'transparent'}
+                    fill={this.props.isEditable ? this.props.shape.color : 'transparent'}
                     r="8"
                 />
                 <Circle
@@ -223,7 +245,7 @@ class DragableSquare extends React.Component {
                     ref={ ref => this.bottomRightButton = ref }
                     x={this.state.width + this.state.x}
                     y={this.state.height + this.state.y}
-                    fill={this.props.isEditable ? this.props.color : 'transparent'}
+                    fill={this.props.isEditable ? this.props.shape.color : 'transparent'}
                     r="8"
                 />
                 {
@@ -247,11 +269,13 @@ class DragableSquare extends React.Component {
 
 DragableSquare.propTypes = {
     index: PropTypes.string.isRequired,
-    y: PropTypes.number,
-    x: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    color: PropTypes.string,
+    shape: PropTypes.shape({
+        y: PropTypes.number,
+        x: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        color: PropTypes.string,
+    }),
     isEditable: PropTypes.bool,
     isDeletable: PropTypes.bool,
     onDelete: PropTypes.func,
