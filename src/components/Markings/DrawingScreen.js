@@ -64,6 +64,9 @@ class DrawingScreen extends React.Component {
             })
         })
 
+        this.toggleExpanded = this.toggleExpanded.bind(this)
+        this.clearDrawingsAndClose = this.clearDrawingsAndClose.bind(this)
+        this.saveDrawingsAndClose = this.saveDrawingsAndClose.bind(this)
     }
 
   componentDidMount() { 
@@ -150,6 +153,78 @@ class DrawingScreen extends React.Component {
         </View>
     )
   }
+    clearDrawingsAndClose() {
+        if (this.props.pendingChanges) {
+            Alert.alert(
+                'Are you sure?',
+                'This will erase all of your recent annotations on this subject',
+                [
+                    {text: 'Yes', onPress: () => {
+                        this.props.drawingScreenActions.cancelEdits()
+                        this.toggleExpanded()
+                    }},
+                    {text: 'Cancel', style: 'cancel'},
+                ],
+            )
+        } else {
+            this.toggleExpanded()
+        }
+    }
+
+    saveDrawingsAndClose() {
+        this.props.drawingScreenActions.saveEdits()
+        this.toggleExpanded()
+    }
+
+    toggleExpanded() {
+        const isExpanding = !this.state.expanded
+        const animations = [
+            Animated.timing(
+                this.state.drawingContainerHeight,
+                {
+                    toValue: isExpanding ? this.expandedImageHeight() : contractedViewSize,
+                    duration: 300,
+                    easing: Easing.linear
+                }
+            ),
+            Animated.timing(
+                this.state.overlayContainerHeight,
+                {
+                    toValue: isExpanding ? this.expandedOverlayHeight() : contractedViewSize,
+                    duration: 300,
+                    easing: Easing.linear
+                }
+            )
+        ]
+
+        const overlayAnimation = 
+            Animated.timing(
+                this.state.drawingComponentsOpacity,
+                {
+                    toValue: isExpanding ? 1 : 0,
+                    duration: 300,
+                    easing: Easing.linear
+                }
+            )
+
+        if (isExpanding) {
+            Animated.parallel(animations).start(() => {
+                overlayAnimation.start(() => {
+                    this.setState({
+                        expanded: isExpanding
+                    })
+                })
+            })
+        } else {
+            overlayAnimation.start(() => {
+                Animated.parallel(animations).start(() => {
+                this.setState({
+                    expanded: isExpanding
+                })
+        })
+            })
+    }
+    }
 }
 
 const styles = {
