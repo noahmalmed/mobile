@@ -1,7 +1,9 @@
 import React from 'react'
 import {
+    Alert,
     Animated,
     Dimensions,
+    Easing,
     Platform,
     Text,
     TouchableOpacity,
@@ -9,15 +11,20 @@ import {
 } from 'react-native'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import * as drawingScreenAction from '../../actions/drawingScreen'
 import { loadRemoteImageToCache } from '../../utils/imageUtils'
 import NativeImage from '../../nativeModules/NativeImage'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { 
     DrawingTitle,
     DrawingButton,
-    SvgOverlay
+    SvgOverlay,
+    StaticSvgOverlay
 } from './components'
 import FontedText from '../common/FontedText';
+import R from 'ramda'
+
 const bottomViewPadding = 250
 const contractedViewSize = 200
 
