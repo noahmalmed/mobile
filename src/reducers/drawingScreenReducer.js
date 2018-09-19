@@ -1,38 +1,89 @@
 import * as ActionConstants from '../constants/actions';
 import R from 'ramda'
 
+/**
+ *  We keep track of all of the drawing actions made
+ *  Drawing actions look like the following: 
+ *  {
+ *      id: number - Id of the shape that's being mutated
+ *      type: Oneof['add', 'edit', 'delete']
+ *      shape: object - If of type add, the shape to be added
+ *      dx: number - If of type 'edit', change in x
+ *      dy: number - If of type 'edit', change in y
+ *      dw: number - If of type 'edit', change in width
+ *      dh: number - If of type 'edit', change in height
+ *  }
+ */
+
+export const DrawingAction = {
+    add: 'add',
+    edit: 'edit',
+    delete: 'delete'
+}
+
+const calculateChanges = (shapes, actions) => {
+    let modifiedShapes = R.clone(shapes)
+    actions.forEach((action) => {
+        switch (action.type){
+            case DrawingAction.add: {
+                modifiedShapes[action.id] = action.shape
+                break
+            }
+            case DrawingAction.edit: {
+                modifiedShapes = R.mapObjIndexed((shape, key) => key === action.id ? updateShape(action, shape) : shape, modifiedShapes)
+                break
+            }
+            case DrawingAction.delete: {
+                modifiedShapes = R.dissoc(action.id, modifiedShapes)
+                break
+            }
+        }
+    })
+    return modifiedShapes
+}
+
+const updateShape = ( { dx, dy, dw, dh }, shape ) => ({
+    ... shape,
+    x: shape.x + dx,
+    y: shape.y + dy,
+    width: shape.width + dw,
+    height: shape.height + dh
+})
+
 const InitialState = {
+    shapesInProgress: {},
     shapes: {},
-    idCount: 0
+    idCount: 0,
+    actions: []
 }
 
 export default function drawingScreen(state=InitialState, action) {
     switch (action.type) {
         case (ActionConstants.ADD_SHAPE): {
-            const newShapeObject = R.set(R.lensProp(state.idCount), action.shapeObject, state.shapes)
-            // const newShapesArray = R.append(action.shapeObject, state.shapes)
-            return { ...state, shapes: newShapeObject, idCount: state.idCount + 1 }
+            const actions = [ ...state.actions, { id: state.idCount, shape: action.shapeObject, type: DrawingAction.add }]
+            const shapesInProgress = calculateChanges(state.shapes, actions)
+            return { ...state, actions, shapesInProgress, idCount: state.idCount + 1 }
         }
         case (ActionConstants.REMOVE_SHAPE): {
-            const newShapesArray = R.omit([action.index], state.shapes)
-            return { ...state, shapes: newShapesArray }
+            const actions = [ ...state.actions, { id: action.index, type: DrawingAction.delete } ]
+            const shapesInProgress = calculateChanges(state.shapes, actions)
+            return { ...state, actions, shapesInProgress }
+        }
+        case (ActionConstants.CANCEL_EDITS): {
+            return { ...state, shapesInProgress: state.shapes, actions: [] }
+        }
+        case (ActionConstants.SAVE_EDITS): {
+
+            return { ...state, shapes: state.shapesInProgress, actions: [] }
         }
         case (ActionConstants.MUTATE_SHAPE): {
             const { dx, dy, dw, dh, index } = action
-            const updatedShapes = R.set(R.lensProp(index),updateShape(dx, dy, dw, dh)(state.shapes[index]), state.shapes)
-            return { ...state, shapes: updatedShapes}
+            const mutation = { id: index, dx, dy, dw, dh, type: DrawingAction.edit}
+            const actions = [ ...state.actions, mutation ]
+            const shapesInProgress = calculateChanges(state.shapes, actions)
+            return { ...state, actions, shapesInProgress }
         }
         default:
             return state
     }
-}
-
-const updateShape = ( dx, dy, dw, dh) => {
-    return (shape) => ({
-        ... shape,
-        x: shape.x + dx,
-        y: shape.y + dy,
-        width: shape.width + dw,
-        height: shape.height + dh
-    })
 }

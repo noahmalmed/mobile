@@ -25,6 +25,14 @@ export const removeShapeAtIndex = (index) => ({
     index
 })
 
+export const cancelEdits = () => ({
+    type: ActionConstants.CANCEL_EDITS
+})
+
+export const saveEdits = () => ({
+    type: ActionConstants.SAVE_EDITS
+})
+
 /**
  * 
  * @param {{dx, dy, dw, dh}} mutation 
