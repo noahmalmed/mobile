@@ -41,7 +41,12 @@ const isValidSwipeWorkflow = (workflow) => {
   const isNotFlipbook = config ? config.multi_image_mode !== 'flipbook' : true
   const doesNotUseFeedback = firstTask.feedback ? !firstTask.feedback.enabled : true;
 
-  return hasTwoAnswers && hasSingleTask && questionNotTooLong && notTooManyShortcuts && isNotFlipbook && doesNotUseFeedback
+  if (hasTwoAnswers && hasSingleTask && questionNotTooLong && notTooManyShortcuts && isNotFlipbook && doesNotUseFeedback) {
+    workflow.type = 'question'
+    return true
+  }
+
+  return false
 }
 
 const isValidDrawingWorkflow = (workflow) => {
@@ -57,7 +62,8 @@ const isValidDrawingWorkflow = (workflow) => {
   if (firstTask.type !== 'drawing') {
     return false
   }
-  if (firstTask.question.length > 200) {
+
+  if (firstTask.instruction.length > 200) {
     return false
   }
 
@@ -70,5 +76,6 @@ const isValidDrawingWorkflow = (workflow) => {
     return false
   }
 
+  workflow.type = 'drawing'
   return true
 }

@@ -72,7 +72,11 @@ const styles = {
     },
     backgroundImage: {
         flex: 1,
-        margin: 15
+        margin: 15,
+        shadowColor: 'rgba(0,0,0,0.15)',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
     },
     svgContainer: {
         justifyContent: 'center',

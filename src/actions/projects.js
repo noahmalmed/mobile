@@ -114,7 +114,7 @@ const getWorkflowsForProjects = projects => {
     return apiClient.type('workflows').get({mobile_friendly: true, active: true, project_id: projectIds})
     .then(workflows => {
         workflows.forEach( workflow => {
-            workflow.swipe_verified = workflow.mobile_friendly && isValidMobileWorkflow(workflow)
+            workflow.mobile_verified = workflow.mobile_friendly && isValidMobileWorkflow(workflow)
             const project = projects.find( project => project.id === workflow.links.project )
             if (!project.workflows.find((projectWorkflow) => projectWorkflow.id === workflow.id)) {
                 project.workflows = R.append(workflow, project.workflows)

@@ -133,7 +133,7 @@ const styles = EStyleSheet.create({
     paddingBottom: 0,
   },
   content: {
-    height: '100% - 300',
+    flex: 1,
     marginHorizontal: 25,
     backgroundColor: 'white'
   },

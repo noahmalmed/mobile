@@ -26,6 +26,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 export class Question extends Component {
   render() {
+    console.log('display question')
     return (
       <View style={[styles.questionContainer]}>
         <View style={styles.question}>
