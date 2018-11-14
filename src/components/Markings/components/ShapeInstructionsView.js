@@ -18,10 +18,13 @@ const ShapeInstructionsView = (props) => {
                     {props.label}
                 </FontedText>
                 <FontedText style={styles.infoText}> 
-                    <FontedText style={warningStyle}>
-                        {`${props.numberDrawn} of ${props.min} required`}
-                    </FontedText>
-                    { props.max ? `, ${props.max} maximum` : '' }
+                    {`${props.numberDrawn} `}
+                    { (props.min || props.max) && 'of ' }
+                    { props.min && <FontedText style={warningStyle}>{`${props.min} required`}</FontedText> }
+                    { (props.min && !props.max) && ' '}
+                    { (props.min && props.max) && ', ' }
+                    { props.max ? `${props.max} maximum ` : '' }
+                    { 'drawn' }
                 </FontedText>
             </View>
         </View>
