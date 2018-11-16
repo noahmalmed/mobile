@@ -119,13 +119,14 @@ export class Register extends React.Component {
               handleOnChangeText={(text) => this.props.setField('email', text)} />
 
             <View style={styles.rowContainer}>
-              <Input
-                labelText={'Password'}
-                addLabel={'Min 8 chars'}
-                inputStyle={'small'}
-                passwordField={!this.state.showPasswordText}
-                handleOnChangeText={(text) => this.props.setField('password', text)} />
-
+              <View style={styles.container}>
+                <Input
+                  labelText={'Password'}
+                  addLabel={'Min 8 chars'}
+                  passwordField={!this.state.showPasswordText}
+                  handleOnChangeText={(text) => this.props.setField('password', text)} 
+                />
+              </View>
                 <View style={[styles.rowContainer, styles.checkboxRowContainer]}>
                 <Checkbox
                     onSelect={() => this.setState({ showPasswordText: !this.state.showPasswordText })}
