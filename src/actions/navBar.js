@@ -16,3 +16,9 @@ export const setNavbarColorForPageToDefault = (pageKey) => ({
     type: ActionConstants.SET_NAVBAR_COLOR_TO_DEFAULT,
     pageKey
 })
+
+export const setNavbarBackButton = (showBackButton, pageKey) => ({
+    type: ActionConstants.SET_NAVBAR_BACK_BUTTON,
+    pageKey,
+    showBackButton
+})

@@ -3,7 +3,8 @@ import * as R from 'ramda'
 
 const InitialNavBarState = {
     titles: {},
-    backgroundColors: {}
+    backgroundColors: {},
+    showBackButtons: {}
 };
 
 export default function navBar(state=InitialNavBarState, action) {
@@ -20,6 +21,10 @@ export default function navBar(state=InitialNavBarState, action) {
             const backgroundColors = state.backgroundColors
             delete backgroundColors[action.pageKey]
             return { ...state, backgroundColors}
+        }
+        case ActionConstants.SET_NAVBAR_BACK_BUTTON: {
+            const showBackButtons = R.set(R.lensProp(action.pageKey), action.showBackButton, state.showBackButtons)
+            return { ...state, showBackButtons }
         }
         default:
             return state;
