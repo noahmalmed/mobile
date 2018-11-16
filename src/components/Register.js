@@ -108,7 +108,7 @@ export class Register extends React.Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView style={styles.scrollView}>
           <View style={styles.registerContainer}>
             <Input
               labelText={'User Name'}
@@ -214,6 +214,9 @@ const styles = EStyleSheet.create({
   touchContainer: {
     paddingTop: 3,
     paddingBottom: 15
+  },
+  scrollView: {
+    backgroundColor: 'white'
   }
 });
 
