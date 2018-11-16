@@ -51,7 +51,7 @@ export class SideDrawerContent extends Component {
 
   signIn(){
     this.close()
-    Actions.SignIn()
+    Actions.SignIn({showBackButton: true})
   }
 
   signOut(){
