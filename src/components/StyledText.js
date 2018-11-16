@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  Text
-} from 'react-native'
+import FontedText from './common/FontedText'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import PropTypes from 'prop-types';
 import { append } from 'ramda'
@@ -14,15 +12,14 @@ const StyledText = (props) => {
   const ellipsisProps = (props.numberOfLines > 0 ? {numberOfLines, ellipsizeMode} : null)
 
   return (
-    <Text style={textStyle} {...ellipsisProps}>
+    <FontedText style={textStyle} {...ellipsisProps}>
       {props.text}
-    </Text>
+    </FontedText>
   )
 }
 
 const styles = EStyleSheet.create({
   defaultText: {
-    fontFamily: 'OpenSans',
     fontSize: 14,
   },
   headerText: {
