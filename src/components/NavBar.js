@@ -18,7 +18,8 @@ import FontedText from './common/FontedText'
 const mapStateToProps = (state, ownProps) => ({
   user: state.user,
   dynamicTitle: state.navBar.titles[ownProps.pageKey],
-  dynamicColor: state.navBar.backgroundColors[ownProps.pageKey]
+  dynamicColor: state.navBar.backgroundColors[ownProps.pageKey],
+  overrideShowBackButton: state.navBar.showBackButtons[ownProps.pageKey]
 })
 
 export class NavBar extends Component {
@@ -97,10 +98,11 @@ export class NavBar extends Component {
     }
 
     const dynamicColorStyle = this.props.dynamicColor !== undefined ? {backgroundColor: this.props.dynamicColor} : null
+    const showBackButton = this.props.overrideShowBackButton ? this.props.overrideShowBackButton : this.props.showBack
     return (
         <View style={[styles.navBarContainer]}>
           <View style={[styles.navBar, dynamicColorStyle]}>
-            <LeftContainer isActive={this.props.showBack} />
+            <LeftContainer isActive={showBackButton} />
             <CenterContainer shouldShowTitle={!this.props.showLogo && !this.props.showAvatar} shouldShowLogo={this.props.showLogo} />
             <RightContainer isActive={this.props.showDrawer} />
           </View>
@@ -178,7 +180,8 @@ NavBar.propTypes = {
   title: PropTypes.string,
   dynamicTitle: PropTypes.string,
   dynamicColor: PropTypes.string,
-  pageKey: PropTypes.string
+  pageKey: PropTypes.string,
+  overrideShowBackButton: PropTypes.bool
 }
 NavBar.defaultProps = {
   showLogo: false,
