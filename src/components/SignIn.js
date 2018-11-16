@@ -17,6 +17,8 @@ import NavBar from './NavBar'
 import OverlaySpinner from './OverlaySpinner'
 import StyledText from './StyledText'
 import { Actions } from 'react-native-router-flux'
+import { bindActionCreators } from 'redux'
+import * as navBarActions from '../actions/navBar'
 
 const mapStateToProps = (state) => ({
   isFetching: state.main.isFetching,
@@ -24,6 +26,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
+  navBarActions: bindActionCreators(navBarActions, dispatch),
   signIn(login, password) {
     dispatch(signIn(login, password))
   },
@@ -31,6 +34,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(continueAsGuest())
   },
 })
+
+const PAGE_KEY = 'SignIn';
 
 export class SignIn extends React.Component {
   constructor(props) {
@@ -40,6 +45,10 @@ export class SignIn extends React.Component {
     this.handleResetPassword = this.handleResetPassword.bind(this)
     this.handleSignIn = this.handleSignIn.bind(this)
     this.continueAsGuest = this.continueAsGuest.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.navBarActions.setNavbarBackButton(this.props.showBackButton, PAGE_KEY)
   }
 
   handleRegistration() {
@@ -72,12 +81,11 @@ export class SignIn extends React.Component {
   }
 
   static renderNavigationBar() {
-    return <NavBar showLogo={true} showDrawer={false} />;
+    return <NavBar pageKey={PAGE_KEY} showLogo={true} showDrawer={false} />;
   }
 
   render() {
     const signInDisabled = ( (this.state.login === '') || (this.state.password ===  '') ? true : false )
-    const continueTinted = !signInDisabled
 
     const errorMessage =
       <StyledText
@@ -120,7 +128,6 @@ export class SignIn extends React.Component {
 
             <Button
               handlePress={this.continueAsGuest}
-              buttonStyle={ continueTinted ? 'disabledButton' : null }
               text={'Continue without signing in'} />
 
             <Button
@@ -173,9 +180,18 @@ const styles = EStyleSheet.create({
 });
 
 SignIn.propTypes = {
+  showBackButton: PropTypes.bool,
   isFetching: PropTypes.bool,
   signIn: PropTypes.func,
   continueAsGuest: PropTypes.func,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  navBarActions: PropTypes.shape({
+    setNavbarBackButton: PropTypes.func
+  })
 }
+
+SignIn.defaultProps = {
+  showBackButton: false
+}
+
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn)
