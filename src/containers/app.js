@@ -74,7 +74,7 @@ export default class App extends Component {
           <Router sceneStyle={styles.sharedSceneStyles}>
             <Drawer key="drawer" contentComponent={SideDrawerContent} open={false} drawerPosition="right">
                 <Scene key="main" tabs={false}>
-                  <Scene key="SignIn" component={SignIn} duration={0} type="reset" navBar={SignIn.renderNavigationBar} />
+                  <Scene key="SignIn" component={SignIn} duration={0} navBar={SignIn.renderNavigationBar} />
                   <Scene key="ZooniverseApp" component={ZooniverseApp} navBar={ZooniverseApp.renderNavigationBar} initial />
                   <Scene key="ProjectDisciplines" component={ProjectDisciplines} navBar={ProjectDisciplines.renderNavigationBar} />
                   <Scene key="About" component={About} navBar={About.renderNavigationBar}/>
