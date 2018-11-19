@@ -46,7 +46,12 @@ exports[`does not render when not connected 1`] = `
           ellipsizeMode="tail"
           style={
             Array [
-              undefined,
+              Object {
+                "fontFamily": "Karla",
+              },
+              Array [
+                undefined,
+              ],
             ]
           }
         >
@@ -126,7 +131,12 @@ exports[`renders correctly 1`] = `
           ellipsizeMode="tail"
           style={
             Array [
-              undefined,
+              Object {
+                "fontFamily": "Karla",
+              },
+              Array [
+                undefined,
+              ],
             ]
           }
         >
@@ -206,7 +216,12 @@ exports[`renders selected discipline 1`] = `
           ellipsizeMode="tail"
           style={
             Array [
-              undefined,
+              Object {
+                "fontFamily": "Karla",
+              },
+              Array [
+                undefined,
+              ],
             ]
           }
         >

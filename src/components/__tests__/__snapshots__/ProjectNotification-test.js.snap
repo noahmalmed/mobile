@@ -16,7 +16,12 @@ exports[`renders checked 1`] = `
     ellipsizeMode="tail"
     style={
       Array [
-        undefined,
+        Object {
+          "fontFamily": "Karla",
+        },
+        Array [
+          undefined,
+        ],
       ]
     }
   >
@@ -41,7 +46,12 @@ exports[`renders not checked 1`] = `
     ellipsizeMode="tail"
     style={
       Array [
-        undefined,
+        Object {
+          "fontFamily": "Karla",
+        },
+        Array [
+          undefined,
+        ],
       ]
     }
   >

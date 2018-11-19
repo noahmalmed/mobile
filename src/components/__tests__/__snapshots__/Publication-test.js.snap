@@ -38,8 +38,13 @@ exports[`renders correctly 1`] = `
         ellipsizeMode="tail"
         style={
           Array [
-            undefined,
-            undefined,
+            Object {
+              "fontFamily": "Karla",
+            },
+            Array [
+              undefined,
+              undefined,
+            ],
           ]
         }
       >

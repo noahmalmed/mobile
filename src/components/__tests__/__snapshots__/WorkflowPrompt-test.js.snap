@@ -23,9 +23,14 @@ exports[`passes false to Modal when not visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }
@@ -38,10 +43,15 @@ exports[`passes false to Modal when not visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }
@@ -140,10 +150,15 @@ exports[`passes false to Modal when not visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }
@@ -348,9 +363,14 @@ exports[`renders correctly when visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }
@@ -363,10 +383,15 @@ exports[`renders correctly when visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }
@@ -465,10 +490,15 @@ exports[`renders correctly when visible 1`] = `
             ellipsizeMode="tail"
             style={
               Array [
-                undefined,
-                undefined,
+                Object {
+                  "fontFamily": "Karla",
+                },
                 Array [
                   undefined,
+                  undefined,
+                  Array [
+                    undefined,
+                  ],
                 ],
               ]
             }

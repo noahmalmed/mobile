@@ -7,8 +7,13 @@ exports[`renders styles as array when style passed in 1`] = `
   ellipsizeMode="tail"
   style={
     Array [
-      undefined,
-      undefined,
+      Object {
+        "fontFamily": "Karla",
+      },
+      Array [
+        undefined,
+        undefined,
+      ],
     ]
   }
 >
@@ -23,7 +28,12 @@ exports[`renders text correctly 1`] = `
   ellipsizeMode="tail"
   style={
     Array [
-      undefined,
+      Object {
+        "fontFamily": "Karla",
+      },
+      Array [
+        undefined,
+      ],
     ]
   }
 >

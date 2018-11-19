@@ -57,9 +57,14 @@ exports[`renders correctly 1`] = `
               numberOfLines={1}
               style={
                 Array [
-                  undefined,
+                  Object {
+                    "fontFamily": "Karla",
+                  },
                   Array [
                     undefined,
+                    Array [
+                      undefined,
+                    ],
                   ],
                 ]
               }
@@ -107,9 +112,14 @@ exports[`renders correctly 1`] = `
               numberOfLines={1}
               style={
                 Array [
-                  undefined,
+                  Object {
+                    "fontFamily": "Karla",
+                  },
                   Array [
                     undefined,
+                    Array [
+                      undefined,
+                    ],
                   ],
                 ]
               }

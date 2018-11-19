@@ -27,9 +27,14 @@ exports[`renders correctly 1`] = `
         ellipsizeMode="tail"
         style={
           Array [
-            undefined,
+            Object {
+              "fontFamily": "Karla",
+            },
             Array [
               undefined,
+              Array [
+                undefined,
+              ],
             ],
           ]
         }
