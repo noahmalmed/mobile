@@ -1,16 +1,8 @@
 import React, { Component } from 'react'
 import {
-    PanResponder,
     View
 } from 'react-native'
-import {
-    Svg,
-    Rect,
-} from 'react-native-svg'
 import PropTypes from 'prop-types'
-import {
-    distanceFromRange
-} from '../../../utils/drawingUtils'
 import ShapeEditorSvg from './ShapeEditorSvg'
 
 const INITIAL_SQUARE_SIDE = 2
@@ -70,7 +62,7 @@ class SvgOverlay extends Component {
             ...shapeDimensions
         }
 
-        if (Math.abs(shapeDimensions.width) > (20 * this.state.displayToNativeRatioX) || Math.abs(shapeDimensions.height) > (20 * this.state.displayToNativeRatioY)) {
+        if (Math.abs(shapeDimensions.width) > 20 || Math.abs(shapeDimensions.height) > 20) {
             this.props.onShapeCreated(shape)
         }
     }

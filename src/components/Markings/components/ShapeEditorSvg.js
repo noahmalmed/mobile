@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {
+    Animated,
     PanResponder,
     View
 } from 'react-native'
@@ -10,12 +11,14 @@ import {
 import R from 'ramda'
 import PropTypes from 'prop-types'
 import EditableRect from './EditableRect'
+import DragableRect from './DragableRect'
 import {
     analyzeCoordinateWithShape,
     calculateShapeChanges,
     isCoordinateWithinSquare,
     isShapeOutOfBounds,
-    drawingTouchState
+    drawingTouchState,
+    constrainDeltas
 } from '../../../utils/shapeUtils'
 
 /**
@@ -53,6 +56,7 @@ class ShapeEditorSvg extends Component {
         this.shapeRefs = {}
 
         this.state = {
+            previewDimensions: new Animated.ValueXY({x: INITIAL_PREVIEW_SHAPE_SIDE, y: INITIAL_PREVIEW_SHAPE_SIDE}),
             shapeIndex: -1,
             shapeToRemoveIndex: -1,
             touchState: {
@@ -64,7 +68,8 @@ class ShapeEditorSvg extends Component {
             },
             isDrawing: false,
             dragOrigin: { x: 0, y: 0},
-            previewShapeDimensions: this.previewShapeInitialDimensions()
+            previewShapeDimensions: this.previewShapeInitialDimensions(),
+            dragIsNegative: { x: false, y: false }
         }
 
         this.erasePanResponder = PanResponder.create({
@@ -198,6 +203,67 @@ class ShapeEditorSvg extends Component {
             },
             onShouldBlockNativeResponder: () => false
         });
+
+        this.drawPanResponder = PanResponder.create({
+            onStartShouldSetPanResponder: () => this.props.mode === 'draw',
+            onPanResponderGrant: (evt, gestureState) => {
+                const { locationX, locationY } = evt.nativeEvent
+                console.log(evt.nativeEvent)
+                console.log(gestureState)
+                this.setState({
+                    dragOrigin: { x: locationX, y: locationY },
+                    showPreviewShape: true
+                }, Animated.timing(                  // Animate over time
+                    this.state.previewDimensions.x,            // The animated value to drive
+                    {
+                      toValue: -10,                   // Animate to opacity: 1 (opaque)
+                      duration: 100,              // Make it take a while
+                    }
+                  ).start()  )
+            },
+            onPanResponderMove: (evt, gestureState) => {
+                const { dragOrigin } = this.state
+                const { width, height } = this.props
+                const { dx, dy } = gestureState
+                const constrainedDeltas = constrainDeltas(dragOrigin, {dx, dy}, width, height)
+
+                this.state.previewDimensions.setValue({
+                    x: Math.abs(constrainedDeltas.dx),
+                    y: Math.abs(constrainedDeltas.dy)
+                })
+
+                const { dragIsNegative } = this.state
+                if (dx < 0 !== dragIsNegative.x || dy < 0 !== dragIsNegative.y ) {
+                    this.setState({
+                        dragIsNegative: {
+                            x: dx < 0,
+                            y: dy < 0
+                        }
+                    })
+                }
+            },
+            onPanResponderRelease: (e, gestureState) => {
+                const { dragOrigin } = this.state
+                const { width, height } = this.props
+                const { dx, dy } = gestureState
+                const constrainedDeltas = constrainDeltas(dragOrigin, {dx, dy}, width, height)
+                
+                const newShapeDimensions = {
+                    x: dx < 0 ? dragOrigin.x - Math.abs(constrainedDeltas.dx) : dragOrigin.x,
+                    y: dy < 0 ? dragOrigin.y - Math.abs(constrainedDeltas.dy) : dragOrigin.y,
+                    width: Math.abs(constrainedDeltas.dx),
+                    height: Math.abs(constrainedDeltas.dy)
+                }
+                this.props.onShapeCreated(newShapeDimensions)
+
+                this.state.previewDimensions.setValue({x: 0, y: 0})
+                this.setState({ showPreviewShape: false })
+            },
+            onPanResponderTerminationRequest: (evt, gestureState) => {
+                console.info('onPanResponderTerminationRequest');
+                return true;
+              },
+        })
     }
 
     componentDidUpdate(prevProps) {
@@ -248,34 +314,38 @@ class ShapeEditorSvg extends Component {
     renderShapes() {        
         const shapeArray = []
         const convertObjectToComponent = (shape, index) => {
+            console.log(shape)
             const { type } = shape
             switch (type) {
                 case ('rect'): {
                     const selectedShape = index !== this.state.shapeIndex
                     shapeArray.push(
-                        <EditableRect
-                            onRectLayout={(event) => {
-                                this.shapeLocations = R.set(R.lensProp(index), event.nativeEvent.layout, this.shapeLocations)
-                            }}
-                            onCornerLayout={(event, corner) => {
-                                this.cornerLocations = R.set(R.lensPath([index, corner]), event.nativeEvent.layout, this.cornerLocations)
-                            }}
-                            onCloseLayout={(event) => {
-                                this.closeLocations = R.set(R.lensProp(index), event.nativeEvent.layout, this.closeLocations)
-                            }}
-                            key={index}
+                        <DragableRect
                             { ...shape }
-                            blurred={this.state.shapeToRemoveIndex === index}
-                            displayToNativeRatioX={this.props.displayToNativeRatioX}
-                            displayToNativeRatioY={this.props.displayToNativeRatioY}
-                            showCorners={this.props.mode === 'draw' && selectedShape}
-                            isDeletable={this.props.mode === 'erase'}
-                            ref={ref => {
-                                if (ref) {
-                                        this.shapeRefs = R.set(R.lensProp(index), ref, this.shapeRefs)
-                                }
-                            }}
                         />
+                        // <EditableRect
+                        //     onRectLayout={(event) => {
+                        //         this.shapeLocations = R.set(R.lensProp(index), event.nativeEvent.layout, this.shapeLocations)
+                        //     }}
+                        //     onCornerLayout={(event, corner) => {
+                        //         this.cornerLocations = R.set(R.lensPath([index, corner]), event.nativeEvent.layout, this.cornerLocations)
+                        //     }}
+                        //     onCloseLayout={(event) => {
+                        //         this.closeLocations = R.set(R.lensProp(index), event.nativeEvent.layout, this.closeLocations)
+                        //     }}
+                        //     key={index}
+                        //     { ...shape }
+                        //     blurred={this.state.shapeToRemoveIndex === index}
+                        //     displayToNativeRatioX={this.props.displayToNativeRatioX}
+                        //     displayToNativeRatioY={this.props.displayToNativeRatioY}
+                        //     showCorners={this.props.mode === 'draw' && selectedShape}
+                        //     isDeletable={this.props.mode === 'erase'}
+                        //     ref={ref => {
+                        //         if (ref) {
+                        //                 this.shapeRefs = R.set(R.lensProp(index), ref, this.shapeRefs)
+                        //         }
+                        //     }}
+                        // />
                     )
                 }
             }
@@ -287,17 +357,19 @@ class ShapeEditorSvg extends Component {
 
     render() {
         const panHandlers = this.props.mode === 'draw' ? this.editPanResponder.panHandlers : this.erasePanResponder.panHandlers
+        const { previewDimensions, dragOrigin, showPreviewShape, dragIsNegative } = this.state
+        const previewShapeStyle = {
+            width: previewDimensions.x,
+            height: previewDimensions.y,
+            top: dragIsNegative.y ? Animated.subtract(new Animated.Value(dragOrigin.y), previewDimensions.y) : dragOrigin.y,
+            left: dragIsNegative.x ? Animated.subtract(new Animated.Value(dragOrigin.x), previewDimensions.x) : dragOrigin.x
+        }
         return (
-            <View { ...panHandlers } style={{height: this.props.height, width: this.props.width}}>
-                <Svg
-                    viewBox={this.props.viewBox}
-                    height={this.props.height}
-                    width={this.props.width}
-                    key={`${Object.keys(this.props.shapes).length}${this.props.mode}`}
-                >
+            <View { ...this.drawPanResponder.panHandlers } style={{height: this.props.height, width: this.props.width}}>
+                <View style={{position: 'absolute', top: 0, left: 0, width: this.props.width, height: this.props.height }}>
+                    { showPreviewShape && <Animated.View style={[previewShapeStyle, {backgroundColor: 'rgba(0, 0, 0, .5)', position: 'absolute', borderWidth: 4, borderColor: 'black'}]} /> }
                     { this.renderShapes() }
-                    { this.state.isDrawing && this.renderPreviewShape() }
-                </Svg>
+                </View> 
             </View>
         )
     }

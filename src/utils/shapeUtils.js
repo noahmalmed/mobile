@@ -204,3 +204,17 @@ const constrainDeltasToRange = (touchState, deltas, shapeCoordinates, maxX, maxY
 
     return constrainedDeltas
 }
+
+export const constrainDeltas = (origin, deltas, rangeWidth, rangeHeight) => {
+    const { x, y } = origin
+    const { dx, dy} = deltas
+    const isLeftOutOfRange = x + dx < 0
+    const isRightOutOfRange = x + dx > rangeWidth
+    const isTopOutOfRange = y + dy < 0
+    const isBottomOutOfRange = y + dy > rangeHeight
+
+    return {
+        dx: isLeftOutOfRange ? -x : isRightOutOfRange ? rangeWidth - x : dx,
+        dy: isTopOutOfRange ? -y : isBottomOutOfRange ? rangeHeight - y : dy
+    }
+}
